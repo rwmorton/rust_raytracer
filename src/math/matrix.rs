@@ -1,17 +1,13 @@
-//
 // Force packing in a contiguous array of memory?
-//
 union DataPacking {
     flat: [f64; 16],
     multi: [[f64; 4]; 4]
 }
 
-//
 // 4x4 matrix
 //
 // # Data storage
-// TODO!
-//
+// Stored in row major order.
 pub struct Matrix {
     pub data: DataPacking
 }

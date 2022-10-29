@@ -3,24 +3,25 @@ mod math;
 use math::vector::*;
 
 fn main() {
-    let mut a: Vector = Vector {x: 1.,y: 2.,z: 3.,w: 0.};
-    let mut b: Vector = Vector {x: 0.,y: 1.,z: 0.,w: 0.};
-    println!("dot product = {}",dot(&a,&b));
-    let sum: Vector = add(&a,&b);
-    println!("(x,y,z,w) = ({},{},{},{})",sum.x,sum.y,sum.z,sum.w);
+    let test: Vector = Vector::new();
+    test.print();
+    let test2: Vector = Default::default();
+    test2.print();
 
-    a = Vector{x: 1.,y: 0.,z: 0.,w: 0.};
-    b = Vector{x: 0.,y: 1.,z: 0.,w: 0.};
+    let a = Vector::xyz(1.,2.,3.);
+    a.print();
+    let a_norm = a.normalize();
+    a_norm.print();
+    println!("a_norm length squared = {}",a_norm.len_sq());
+    println!("a_norm length = {}",a_norm.len());
 
-    let c: Vector = cross(&a,&b);
-
-    println!("cross = ({}, {}, {}, {})",c.x,c.y,c.z,c.w);
-
-    let d: Vector = Vector{x: 2.,y: 2.,z: 2.,w: 0.};
-    let d_norm: Vector = normalize(&d);
-
-    print_vector(&d_norm);
-
-    println!("length squared of d_norm = {}",len_sq(&d_norm));
-    println!("length of d_norm = {}",len(&d_norm));
+    let x = X_AXIS;
+    let y = Y_AXIS;
+    let cross = x.cross(&y);
+    x.print();
+    print!(" x ");
+    y.print();
+    print!(" = ");
+    cross.print();
+    println!("");
 }

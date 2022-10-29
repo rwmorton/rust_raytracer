@@ -1,75 +1,129 @@
-//
 // # Vector
-// 4 dimensional column vector (w = 0) or point (w != 0)
+// 3 dimensional column vector (w = 0)
 // 
 // # Parameters
 // * x
 // * y
 // * z
-// * w
-//
 pub struct Vector {
     pub x: f64,
     pub y: f64,
-    pub z: f64,
-    pub w: f64
+    pub z: f64
 }
 
-pub fn print_vector(v: &Vector) {
-    println!("({},{},{},{})",v.x,v.y,v.z,v.w);
-}
+// Helpful constants
+pub const ZERO  : Vector = Vector{x: 0.0,y: 0.0,z: 0.0};
+pub const X_AXIS: Vector = Vector{x: 1.0,y: 0.0,z: 0.0};
+pub const Y_AXIS: Vector = Vector{x: 0.0,y: 1.0,z: 0.0};
+pub const Z_AXIS: Vector = Vector{x: 0.0,y: 0.0,z: 1.0};
 
-pub fn add(a: &Vector,b: &Vector) -> Vector {
-    Vector {
-        x: a.x + b.x,
-        y: a.y + b.y,
-        z: a.z + b.z,
-        w: a.w + b.w
+impl Default for Vector {
+    // default
+    fn default() -> Self {
+        ZERO
     }
 }
 
-pub fn dot(a: &Vector,b: &Vector) -> f64 {
-    a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
-}
-
-//
-// Vector cross product (always takes w = 0)
-//
-pub fn cross(a: &Vector,b: &Vector) -> Vector {
-    Vector {
-        x: a.y*b.z - a.z*b.y,
-        y: a.z*b.x - a.x*b.z,
-        z: a.x*b.y - a.y*b.x,
-        w: 0.0
+impl Vector {
+    // Defaults to zero vector
+    pub fn new() -> Vector {
+        Vector {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0
+        }
     }
-}
 
-//
-// Vector length squared
-//
-pub fn len_sq(v: &Vector) -> f64 {
-    dot(&v,&v)
-}
+    pub fn xyz(x: f64,y: f64, z: f64) -> Vector {
+        Vector {x,y,z}
+    }
 
-//
-// Vector length
-//
-pub fn len(v: &Vector) -> f64 {
-    f64::sqrt(dot(&v,&v))
-}
+    /*pub fn new(
+        x: Option<f64>,
+        y: Option<f64>,
+        z: Option<f64>
+    ) -> Vector {
+        let mut _x: f64 = 0.0;
+        let mut _y: f64 = 0.0;
+        let mut _z: f64 = 0.0;
 
-//
-// Normalize given vector and return a copy
-//
-pub fn normalize(v: &Vector) -> Vector {
-    let v_len = len(&v);
+        match (x,y,z) {
+            Some(x,y,z) => Vector{x: _x,y: _y,z: _z},
+            None => Vector{0.,0.,0.}
+        }
 
-    assert!(v_len != 0.0);
+        // match (x,y,z) {
+        //     Some(x,y,z) => Vector{x: x,y: y,z: z},
+        //     None => ZERO
+        // }
+    }*/
 
-    Vector {
-        x: v.x / v_len,
-        y: v.y / v_len,
-        z: v.z / v_len,
-        w: 0.0
+    // Print vector
+    pub fn print(&self) {
+        println!("({},{},{})",self.x,self.y,self.z);
+    }
+
+    // Immutable sum with another vector
+    pub fn add(&self,v: &Vector) -> Vector {
+        Vector {
+            x: self.x + v.x,
+            y: self.y + v.y,
+            z: self.z + v.z
+        }
+    }
+
+    // Immutable subtract another vector from self
+    pub fn sub(&self,v: &Vector) -> Vector {
+        Vector {
+            x: self.x - v.x,
+            y: self.y - v.y,
+            z: self.z - v.z
+        }
+    }
+
+    // Immutable scale
+    pub fn scale(&self,scale: f64) -> Vector {
+        Vector {
+            x: self.x * scale,
+            y: self.y * scale,
+            z: self.z * scale
+        }
+    }
+
+    // Dot product
+    pub fn dot(&self,v: &Vector) -> f64 {
+        self.x*v.x + self.y*v.y + self.z*v.z
+    }
+
+    // Immutable cross product
+    pub fn cross(&self,v: &Vector) -> Vector {
+        Vector {
+            x: self.y*v.z - self.z*v.y,
+            y: self.z*v.x - self.x*v.z,
+            z: self.x*v.y - self.y*v.x
+        }
+    }
+
+    // Vector length squared
+    pub fn len_sq(&self) -> f64 {
+        self.x*self.x + self.y*self.y + self.z*self.z
+    }
+
+    // Vector length
+    pub fn len(&self) -> f64 {
+        f64::sqrt(Vector::len_sq(self))
+    }
+
+    // Immutable normalization
+    pub fn normalize(&self) -> Vector {
+        let v_len = Vector::len(&self);
+    
+        assert!(v_len != 0.0);
+    
+        Vector {
+            x: self.x / v_len,
+            y: self.y / v_len,
+            z: self.z / v_len
+        }
     }
 }
