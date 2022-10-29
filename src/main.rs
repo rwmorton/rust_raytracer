@@ -105,5 +105,7 @@ fn main() {
         print_row(row3);
         let row4 = m.get_row(3);
         print_row(row4);
+
+        // test get rows as vectors
     }
 }

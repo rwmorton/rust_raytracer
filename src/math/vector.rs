@@ -132,3 +132,104 @@ pub fn normalize(v: &mut Vector) {
     v.y *= recip;
     v.z *= recip;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// UNIT TESTS //////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    // test vector construction correct
+    fn test_new() {
+        let a: Vector = Vector::new(1.,2.,3.);
+        let x = 1f64;
+        let y = 2f64;
+        let z = 3f64;
+        assert_eq!(a.x,x);
+        assert_eq!(a.y,y);
+        assert_eq!(a.z,z);
+    }
+
+    #[test]
+    // test vector addition
+    fn test_add() {
+        let a: Vector = Vector::new(3.,4.,3.);
+        let b: Vector = Vector::new(9.,2.,4.);
+        let c: Vector = a.add(&b);
+        assert_eq!(c.x,12.);
+        assert_eq!(c.y,6.);
+        assert_eq!(c.z,7.);
+    }
+
+    #[test]
+    // test vector subtraction
+    fn test_sub() {
+        let a: Vector = Vector::new(1.,-4.,11.);
+        let b: Vector = Vector::new(3.,-8.,4.);
+        let c: Vector = a.sub(&b);
+        assert_eq!(c.x,-2.);
+        assert_eq!(c.y,4.);
+        assert_eq!(c.z,7.);
+    }
+
+    #[test]
+    // test vector scale
+    fn test_scale() {
+        let v: Vector = Vector::new(1.,5.,7.);
+        let scale = 2f64;
+        let scaled: Vector = v.scale(scale);
+        assert_eq!(scaled.x,2.);
+        assert_eq!(scaled.y,10.);
+        assert_eq!(scaled.z,14.);
+    }
+
+    #[test]
+    // test vector dot product
+    fn test_dot() {
+        let a: Vector = Vector::new(-1.,3.,5.);
+        let b: Vector = Vector::new(6.,2.,11.);
+        let dot: f64 = a.dot(&b);
+        assert_eq!(dot,55.);
+    }
+
+    #[test]
+    // test vector cross product
+    fn test_cross() {
+        let a: Vector = Vector::new(3.,-3.,1.);
+        let b: Vector = Vector::new(4.,9.,2.);
+        let c: Vector = a.cross(&b);
+        assert_eq!(c.x,-15.);
+        assert_eq!(c.y,-2.);
+        assert_eq!(c.z,39.);
+    }
+
+    #[test]
+    // test vector length squared
+    fn test_len_sq() {
+        let v: Vector = Vector::new(3.,4.,5.);
+        let len_sq: f64 = v.len_sq();
+        assert_eq!(len_sq,50.);
+    }
+
+    #[test]
+    // test vector length
+    fn test_len() {
+        let v: Vector = Vector::new(3.,4.,5.);
+        let len: f64 = v.len();
+        assert_eq!(len,f64::sqrt(v.len_sq()));
+    }
+
+    #[test]
+    // test vector normalization
+    fn test_normalize() {
+        let v: Vector = Vector::new(8.,-1.,4.);
+        let v_norm: Vector = v.normalize();
+        let len: f64 = v.len();
+        assert_eq!(v_norm.x,v.x / len);
+        assert_eq!(v_norm.y,v.y / len);
+        assert_eq!(v_norm.z,v.z / len);
+    }
+}
