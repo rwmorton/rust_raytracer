@@ -142,15 +142,36 @@ mod tests {
     use super::*;
 
     #[test]
+    // is X_AXIS constant correct?
+    fn test_x_axis_constant() {
+        assert_eq!(X_AXIS.x,1.);
+        assert_eq!(X_AXIS.y,0.);
+        assert_eq!(X_AXIS.z,0.);
+    }
+
+    #[test]
+    // is Y_AXIS constant correct?
+    fn test_y_axis_constant() {
+        assert_eq!(Y_AXIS.x,0.);
+        assert_eq!(Y_AXIS.y,1.);
+        assert_eq!(Y_AXIS.z,0.);
+    }
+
+    #[test]
+    // is Z_AXIS constant correct?
+    fn test_z_axis_constant() {
+        assert_eq!(Z_AXIS.x,0.);
+        assert_eq!(Z_AXIS.y,0.);
+        assert_eq!(Z_AXIS.z,1.);
+    }
+
+    #[test]
     // test vector construction correct
     fn test_new() {
         let a: Vector = Vector::new(1.,2.,3.);
-        let x = 1f64;
-        let y = 2f64;
-        let z = 3f64;
-        assert_eq!(a.x,x);
-        assert_eq!(a.y,y);
-        assert_eq!(a.z,z);
+        assert_eq!(a.x,1.);
+        assert_eq!(a.y,2.);
+        assert_eq!(a.z,3.);
     }
 
     #[test]

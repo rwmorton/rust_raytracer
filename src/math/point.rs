@@ -27,3 +27,31 @@ impl Point {
         ZERO
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// UNIT TESTS //////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    // is ZERO constant correct
+    fn test_zero_constant() {
+        assert_eq!(ZERO.x,0.);
+        assert_eq!(ZERO.y,0.);
+        assert_eq!(ZERO.z,0.);
+        assert_eq!(ZERO.w,0.);
+    }
+
+    #[test]
+    // should construct to zero point
+    fn test_new() {
+        let p: Point = Point::new();
+        assert_eq!(p.x,0.);
+        assert_eq!(p.y,0.);
+        assert_eq!(p.z,0.);
+        assert_eq!(p.w,0.);
+    }
+}
