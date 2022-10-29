@@ -1,31 +1,31 @@
-// # Vector
-// 3 dimensional column vector (w = 0)
-// 
-// # Parameters
-// * x
-// * y
-// * z
+/// # Vector
+/// 3 dimensional column vector (w = 0)
+/// 
+/// # Parameters
+/// * x
+/// * y
+/// * z
 pub struct Vector {
     pub x: f64,
     pub y: f64,
     pub z: f64
 }
 
-// Helpful constants
+/// Helpful constants
 pub const ZERO  : Vector = Vector{x: 0.0,y: 0.0,z: 0.0};
 pub const X_AXIS: Vector = Vector{x: 1.0,y: 0.0,z: 0.0};
 pub const Y_AXIS: Vector = Vector{x: 0.0,y: 1.0,z: 0.0};
 pub const Z_AXIS: Vector = Vector{x: 0.0,y: 0.0,z: 1.0};
 
 impl Default for Vector {
-    // default
+    /// default
     fn default() -> Self {
         ZERO
     }
 }
 
 impl Vector {
-    // Defaults to zero vector
+    /// Construct vector from (x,y,z) coords
     pub fn new(x: f64,y: f64,z: f64) -> Vector {
         Vector {x,y,z}
     }
@@ -50,12 +50,12 @@ impl Vector {
         // }
     }*/
 
-    // Print vector
+    /// Print vector
     pub fn print(&self) {
         println!("({},{},{})",self.x,self.y,self.z);
     }
 
-    // Sum with another vector (immutable)
+    /// Sum with another vector (immutable)
     pub fn add(&self,v: &Vector) -> Vector {
         Vector {
             x: self.x + v.x,
@@ -64,7 +64,7 @@ impl Vector {
         }
     }
 
-    // Cubtract another vector from self (immutable)
+    /// Subtract another vector from self (immutable)
     pub fn sub(&self,v: &Vector) -> Vector {
         Vector {
             x: self.x - v.x,
@@ -73,7 +73,7 @@ impl Vector {
         }
     }
 
-    // Scaled copy
+    /// Scaled copy
     pub fn scale(&self,scale: f64) -> Vector {
         Vector {
             x: self.x * scale,
@@ -82,12 +82,12 @@ impl Vector {
         }
     }
 
-    // Dot product
+    /// Dot product
     pub fn dot(&self,v: &Vector) -> f64 {
         self.x*v.x + self.y*v.y + self.z*v.z
     }
 
-    // Cross product
+    /// Cross product
     pub fn cross(&self,v: &Vector) -> Vector {
         Vector {
             x: self.y*v.z - self.z*v.y,
@@ -96,17 +96,17 @@ impl Vector {
         }
     }
 
-    // Vector length squared
+    /// Vector length squared
     pub fn len_sq(&self) -> f64 {
         self.x*self.x + self.y*self.y + self.z*self.z
     }
 
-    // Vector length
+    /// Vector length
     pub fn len(&self) -> f64 {
         f64::sqrt(Vector::len_sq(self))
     }
 
-    // Normalized copy
+    /// Normalized copy
     pub fn normalize(&self) -> Vector {
         let v_len = Vector::len(&self);
     
@@ -118,19 +118,6 @@ impl Vector {
             z: self.z / v_len
         }
     }
-}
-
-// Normalize a vector (mutable)
-pub fn normalize(v: &mut Vector) {
-    let len: f64 = v.len();
-
-    assert!(len != 0.0);
-    
-    let recip: f64 = 1.0 / len;
-
-    v.x *= recip;
-    v.y *= recip;
-    v.z *= recip;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

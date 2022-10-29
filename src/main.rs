@@ -1,13 +1,19 @@
 mod math;
+mod image;
 
 use math::vector::*;
 use math::matrix::*;
+use image::color::*;
 
 fn print_row(r: (f64,f64,f64,f64)) {
     println!("({},{},{},{})",r.0,r.1,r.2,r.3);
 }
 
 fn main() {
+    {
+        // test Color
+        let c: Color = Color::new(0.1,0.2,0.3,10.5);
+    }
     let test: Vector = Vector::new(0.,0.,0.);
     test.print();
     let test2: Vector = Default::default();
@@ -31,9 +37,7 @@ fn main() {
     println!("");
 
     {
-        let mut v: Vector = Vector{x: 2.,y: 8.,z: 0.5};
-        v.print();
-        normalize(&mut v);
+        let v: Vector = Vector{x: 2.,y: 8.,z: 0.5};
         v.print();
         println!("length = {}",v.len());
     }

@@ -1,22 +1,23 @@
 use super::vector::Vector;
 use super::point::Point;
+use super::ray::Ray;
 
-// 4x4 matrix
+/// 4x4 matrix
 //
-// # Data storage
-// Matrix data is stored in row major order.
+/// # Data storage
+/// Matrix data is stored in row major order.
 //
-// Array indices [0,...,16] are mapped out like so:
+/// Array indices [0,...,16] are mapped out like so:
 //
-//  0  1  2  3
-//  4  5  6  7
-//  8  9 10 11
-// 12 13 14 15
+///  0  1  2  3
+///  4  5  6  7
+///  8  9 10 11
+/// 12 13 14 15
 pub struct Matrix {
     pub m: [f64; 16]
 }
 
-// helpful constants
+/// helpful constants
 const IDENTITY: Matrix = Matrix {
     m: [
         1.0,0.0,0.0,0.0,
@@ -38,7 +39,7 @@ impl Matrix {
         }
     }
 
-    // Set with tuples in row order
+    /// Set with tuples in row order
     pub fn set
     (
         &mut self,
@@ -69,8 +70,8 @@ impl Matrix {
         (*self).m[15] = row4.3;
     }
 
-    // Scale
-    // TODO: Is there a away to initialize an array with an expression?
+    /// Scale
+    /// TODO: Is there a away to initialize an array with an expression?
     pub fn scale(&self,scale: f64) -> Matrix {
         let mut scaled: Matrix = Matrix {
             m: [0.0; 16]
@@ -83,7 +84,7 @@ impl Matrix {
         scaled // return
     }
 
-    // Multiply by another matrix (immutable)
+    /// Multiply by another matrix (immutable)
     pub fn mul(&self,m: &Matrix) -> Matrix {
         Matrix {
             m: [
@@ -111,7 +112,7 @@ impl Matrix {
         }
     }
 
-    // Get i'th row as a 4 dimensional tuple
+    /// Get i'th row as a 4 dimensional tuple
     pub fn get_row(&self,i: usize) -> (f64,f64,f64,f64) {
         (
             self.m[i*4 + 0],
@@ -121,8 +122,8 @@ impl Matrix {
         )
     }
 
-    // Get i'th row as a 3 dimensional vector (take w = 0)
-    // so 4th column of each row is ignored in multiplication
+    /// Get i'th row as a 3 dimensional vector (take w = 0)
+    /// so 4th column of each row is ignored in multiplication
     pub fn get_row_as_vector(&self,i: usize) -> Vector {
         Vector {
             x: self.m[i*4 + 0],
@@ -131,8 +132,8 @@ impl Matrix {
         }
     }
 
-    // Vector transformation
-    // We get each row of the matrix as a 3 dimensional vector
+    /// Vector transformation
+    /// We get each row of the matrix as a 3 dimensional vector
     pub fn mul_vector(&self,v: &Vector) -> Vector {
         Vector {
             x: v.dot(&self.get_row_as_vector(0)),
@@ -141,7 +142,7 @@ impl Matrix {
         }
     }
 
-    // Point (affine) transformation
+    /// Point (affine) transformation
     pub fn mul_point(&self,p: &Point) -> Point {
         let r1 = self.get_row(0);
         let r2 = self.get_row(1);
@@ -156,7 +157,15 @@ impl Matrix {
         }
     }
 
-    // Transpose of matrix (immutable)
+    /// Ray transformation
+    pub fn mul_ray(&self,r: &Ray) -> Ray {
+        Ray {
+            o: self.mul_point(&r.o),
+            d: self.mul_vector(&r.d)
+        }
+    }
+
+    /// Transpose of matrix (immutable)
     pub fn transpose(&self) -> Matrix {
         Matrix {
             m: [
@@ -184,7 +193,7 @@ impl Matrix {
         }
     }
 
-    // TODO: Add formatting.
+    /// TODO: Add formatting.
     pub fn print(&self) {
         println!("| {} {} {} {} |",self.m[0],self.m[1],self.m[2],self.m[3]);
         println!("| {} {} {} {} |",self.m[4],self.m[5],self.m[6],self.m[7]);
@@ -465,6 +474,32 @@ mod test {
         assert_eq!(mxp.y,60.);
         assert_eq!(mxp.z,100.);
         assert_eq!(mxp.w,140.);
+    }
+
+    #[test]
+    // transform ray by matrix
+    fn test_mul_ray() {
+        let mut m: Matrix = Matrix::new();
+        m.set
+        (
+            (1.,2.,3.,4.),
+            (5.,6.,7.,8.),
+            (9.,10.,11.,12.),
+            (13.,14.,15.,16.)
+        );
+        let o: Point = Point{x:4.,y:3.,z:2.,w:1.};
+        let d: Vector = Vector{x:4.,y:3.,z:2.};
+        let mut r: Ray = Ray{o,d};
+        r = m.mul_ray(&r);
+        // ray origin
+        assert_eq!(r.o.x,20.);
+        assert_eq!(r.o.y,60.);
+        assert_eq!(r.o.z,100.);
+        assert_eq!(r.o.w,140.);
+        // ray direction
+        assert_eq!(r.d.x,16.);
+        assert_eq!(r.d.y,52.);
+        assert_eq!(r.d.z,88.);
     }
 
     #[test]
