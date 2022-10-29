@@ -9,26 +9,52 @@ union DataPacking {
 // # Data storage
 // Stored in row major order.
 pub struct Matrix {
-    pub data: DataPacking
+    //pub data: DataPacking
+    pub m: [f64; 16] // = [0.0; 16]
 }
 
-pub fn add(a: &Matrix,b: &Matrix) -> Matrix {
-    return Matrix {
-        flat[0]  = a.flat[0]  + b.flat[0],
-        flat[1]  = a.flat[1]  + b.flat[1],
-        flat[2]  = a.flat[2]  + b.flat[2],
-        flat[3]  = a.flat[3]  + b.flat[3],
-        flat[4]  = a.flat[4]  + b.flat[4],
-        flat[5]  = a.flat[5]  + b.flat[5],
-        flat[6]  = a.flat[6]  + b.flat[6],
-        flat[7]  = a.flat[7]  + b.flat[7],
-        flat[8]  = a.flat[8]  + b.flat[8],
-        flat[9]  = a.flat[9]  + b.flat[9],
-        flat[10] = a.flat[10] + b.flat[10],
-        flat[11] = a.flat[11] + b.flat[11],
-        flat[12] = a.flat[12] + b.flat[12],
-        flat[13] = a.flat[13] + b.flat[13],
-        flat[14] = a.flat[14] + b.flat[14],
-        flat[15] = a.flat[15] + b.flat[15],
+// helpful constants
+const IDENTITY: Matrix = Matrix {
+    m: [
+        1.0,0.0,0.0,0.0,
+        0.0,1.0,0.0,0.0,
+        0.0,0.0,1.0,0.0,
+        0.0,0.0,0.0,1.0
+    ]
+};
+
+impl Matrix {
+    pub fn new() -> Matrix {
+        let mut m: Matrix = Matrix {m: [0.0; 16]};
+        // row 1
+        m.m[0] = 1.0;
+        m.m[1] = 0.0;
+        m.m[2] = 0.0;
+        m.m[3] = 0.0;
+        // row 2
+        m.m[4] = 0.0;
+        m.m[5] = 1.0;
+        m.m[6] = 0.0;
+        m.m[7] = 0.0;
+        // row 3
+        m.m[8] = 0.0;
+        m.m[9] = 0.0;
+        m.m[10] = 1.0;
+        m.m[11] = 0.0;
+        // row 4
+        m.m[12] = 0.0;
+        m.m[13] = 0.0;
+        m.m[14] = 0.0;
+        m.m[15] = 0.0;
+
+        m // return
+}
+
+    // TODO: Add formatting.
+    pub fn print(&self) {
+        println!("| {} {} {} {} |",self.m[0],self.m[1],self.m[2],self.m[3]);
+        println!("| {} {} {} {} |",self.m[4],self.m[5],self.m[6],self.m[7]);
+        println!("| {} {} {} {} |",self.m[8],self.m[9],self.m[10],self.m[11]);
+        println!("| {} {} {} {} |",self.m[12],self.m[13],self.m[14],self.m[15]);
     }
 }

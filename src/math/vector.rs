@@ -26,15 +26,7 @@ impl Default for Vector {
 
 impl Vector {
     // Defaults to zero vector
-    pub fn new() -> Vector {
-        Vector {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0
-        }
-    }
-
-    pub fn xyz(x: f64,y: f64, z: f64) -> Vector {
+    pub fn new(x: f64,y: f64,z: f64) -> Vector {
         Vector {x,y,z}
     }
 
@@ -63,7 +55,7 @@ impl Vector {
         println!("({},{},{})",self.x,self.y,self.z);
     }
 
-    // Immutable sum with another vector
+    // Sum with another vector (immutable)
     pub fn add(&self,v: &Vector) -> Vector {
         Vector {
             x: self.x + v.x,
@@ -72,7 +64,7 @@ impl Vector {
         }
     }
 
-    // Immutable subtract another vector from self
+    // Cubtract another vector from self (immutable)
     pub fn sub(&self,v: &Vector) -> Vector {
         Vector {
             x: self.x - v.x,
@@ -81,7 +73,7 @@ impl Vector {
         }
     }
 
-    // Immutable scale
+    // Scaled copy
     pub fn scale(&self,scale: f64) -> Vector {
         Vector {
             x: self.x * scale,
@@ -95,7 +87,7 @@ impl Vector {
         self.x*v.x + self.y*v.y + self.z*v.z
     }
 
-    // Immutable cross product
+    // Cross product
     pub fn cross(&self,v: &Vector) -> Vector {
         Vector {
             x: self.y*v.z - self.z*v.y,
@@ -114,7 +106,7 @@ impl Vector {
         f64::sqrt(Vector::len_sq(self))
     }
 
-    // Immutable normalization
+    // Normalized copy
     pub fn normalize(&self) -> Vector {
         let v_len = Vector::len(&self);
     
@@ -126,4 +118,17 @@ impl Vector {
             z: self.z / v_len
         }
     }
+}
+
+// Normalize a vector (mutable)
+pub fn normalize(v: &mut Vector) {
+    let len: f64 = v.len();
+
+    assert!(len != 0.0);
+    
+    let recip: f64 = 1.0 / len;
+
+    v.x *= recip;
+    v.y *= recip;
+    v.z *= recip;
 }
