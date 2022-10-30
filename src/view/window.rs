@@ -1,3 +1,6 @@
+// https://github.com/Rust-SDL2/rust-sdl2
+// https://rust-sdl2.github.io/rust-sdl2/sdl2/index.html
+
 use sdl2::{Sdl,VideoSubsystem};
 use sdl2::video;
 use sdl2::render::{Canvas,Texture};
