@@ -1,5 +1,6 @@
 use super::vector::Vector;
 use super::point::Point;
+use super::normal::Normal;
 use super::ray::Ray;
 
 /// 4x4 matrix
@@ -37,6 +38,14 @@ impl Matrix {
                 0.0,0.0,0.0,1.0
             ]
         }
+    }
+
+    /// Access (row i, column j) of matrix
+    pub fn at(&self,i: usize,j: usize) -> f64 {
+        assert_eq!(i>=0 && i<4,true);
+        assert_eq!(j>=0 && j<4,true);
+
+        self.m[i*4 + j]
     }
 
     /// Set with tuples in row order
@@ -143,17 +152,36 @@ impl Matrix {
     }
 
     /// Point (affine) transformation
+    /// 
+    /// Convert homogeneous point to ordinary points:
+    /// (x,y,z,w) = (x/w,y/w,z/w)
     pub fn mul_point(&self,p: &Point) -> Point {
         let r1 = self.get_row(0);
         let r2 = self.get_row(1);
         let r3 = self.get_row(2);
         let r4 = self.get_row(3);
 
+        let x: f64 = r1.0*p.x + r1.1*p.y + r1.2*p.z + r1.3;
+        let y: f64 = r2.0*p.x + r2.1*p.y + r2.2*p.z + r2.3;
+        let z: f64 = r3.0*p.x + r3.1*p.y + r3.2*p.z + r3.3;
+        let w: f64 = r4.0*p.x + r4.1*p.y + r4.2*p.z + r4.3;
+
+        // Divide by w to convert point back to a nonhomogenous point
+        let w_recip = 1.0 / w; // TODO: handle zero and case when w = 1.0
+
         Point {
-            x: r1.0*p.x + r1.1*p.y + r1.2*p.z + r1.3*p.w,
-            y: r2.0*p.x + r2.1*p.y + r2.2*p.z + r2.3*p.w,
-            z: r3.0*p.x + r3.1*p.y + r3.2*p.z + r3.3*p.w,
-            w: r4.0*p.x + r4.1*p.y + r4.2*p.z + r4.3*p.w,
+            x: x * w_recip,
+            y: y * w_recip,
+            z: z * w_recip
+        }
+    }
+
+    /// Normal transformation
+    pub fn mul_normal(&self,n: &Normal) -> Normal {
+        Normal {
+            x: n.dot(&self.get_row_as_vector(0)),
+            y: n.dot(&self.get_row_as_vector(1)),
+            z: n.dot(&self.get_row_as_vector(2))
         }
     }
 
@@ -259,6 +287,23 @@ mod test {
         assert_eq!(m.m[13],0.);
         assert_eq!(m.m[14],0.);
         assert_eq!(m.m[15],1.);
+    }
+
+    #[test]
+    // Should access correct (i,j) element
+    fn test_at() {
+        let mut m: Matrix = Matrix::new();
+        m.set
+        (
+            (1.,2.,3.,4.),
+            (5.,6.,7.,8.),
+            (9.,10.,11.,12.),
+            (13.,14.,15.,16.)
+        );
+        assert_eq!(m.at(0,0),1.);
+        assert_eq!(m.at(2,3),12.);
+        assert_eq!(m.at(3,1),14.);
+        assert_eq!(m.at(0,3),4.);
     }
 
     #[test]
@@ -468,12 +513,30 @@ mod test {
             (9.,10.,11.,12.),
             (13.,14.,15.,16.)
         );
-        let p: Point = Point{x:4.,y:3.,z:2.,w:1.};
+        let p: Point = Point{x:4.,y:3.,z:2.};
         let mxp: Point = m.mul_point(&p);
-        assert_eq!(mxp.x,20.);
-        assert_eq!(mxp.y,60.);
-        assert_eq!(mxp.z,100.);
-        assert_eq!(mxp.w,140.);
+        let w: f64 = 140.;
+        assert_eq!(mxp.x,20./w);
+        assert_eq!(mxp.y,60./w);
+        assert_eq!(mxp.z,100./w);
+    }
+
+    #[test]
+    // transform normal by matrix
+    fn test_mul_normal() {
+        let mut m: Matrix = Matrix::new();
+        m.set
+        (
+            (1.,2.,3.,4.),
+            (5.,6.,7.,8.),
+            (9.,10.,11.,12.),
+            (13.,14.,15.,16.)
+        );
+        let n: Normal = Normal{x:4.,y:3.,z:2.};
+        let mxn: Normal = m.mul_normal(&n);
+        assert_eq!(mxn.x,16.);
+        assert_eq!(mxn.y,52.);
+        assert_eq!(mxn.z,88.);
     }
 
     #[test]
@@ -487,15 +550,15 @@ mod test {
             (9.,10.,11.,12.),
             (13.,14.,15.,16.)
         );
-        let o: Point = Point{x:4.,y:3.,z:2.,w:1.};
+        let o: Point = Point{x:4.,y:3.,z:2.};
         let d: Vector = Vector{x:4.,y:3.,z:2.};
         let mut r: Ray = Ray{o,d};
         r = m.mul_ray(&r);
         // ray origin
-        assert_eq!(r.o.x,20.);
-        assert_eq!(r.o.y,60.);
-        assert_eq!(r.o.z,100.);
-        assert_eq!(r.o.w,140.);
+        let w: f64 = 140.;
+        assert_eq!(r.o.x,20./w);
+        assert_eq!(r.o.y,60./w);
+        assert_eq!(r.o.z,100./w);
         // ray direction
         assert_eq!(r.d.x,16.);
         assert_eq!(r.d.y,52.);

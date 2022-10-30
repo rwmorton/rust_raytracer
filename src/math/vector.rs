@@ -1,5 +1,8 @@
+use super::normal::Normal;
+
 /// # Vector
-/// 3 dimensional column vector (w = 0)
+/// 3 dimensional column vector
+/// Implicitly represented as homogeneous column vector (x,y,z,0)
 /// 
 /// # Parameters
 /// * x
@@ -64,6 +67,15 @@ impl Vector {
         }
     }
 
+    /// Add normal to this vector
+    pub fn add_normal(&self,n: &Normal) -> Vector {
+        Vector {
+            x: self.x + n.x,
+            y: self.y + n.y,
+            z: self.z + n.z
+        }
+    }
+
     /// Subtract another vector from self (immutable)
     pub fn sub(&self,v: &Vector) -> Vector {
         Vector {
@@ -82,9 +94,23 @@ impl Vector {
         }
     }
 
+    /// Negate vector
+    pub fn neg(&self) -> Vector {
+        Vector {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z
+        }
+    }
+
     /// Dot product
     pub fn dot(&self,v: &Vector) -> f64 {
         self.x*v.x + self.y*v.y + self.z*v.z
+    }
+
+    /// Dot product with normal
+    pub fn dot_n(&self,n: &Normal) -> f64 {
+        self.x*n.x + self.y*n.y + self.z*n.z
     }
 
     /// Cross product
@@ -173,6 +199,17 @@ mod tests {
     }
 
     #[test]
+    // test adding normal to vector
+    fn test_add_normal() {
+        let v: Vector = Vector::new(1.,-2.,3.);
+        let n: Normal = Normal::new(2.,2.,2.);
+        let w: Vector = v.add_normal(&n);
+        assert_eq!(w.x,3.);
+        assert_eq!(w.y,0.);
+        assert_eq!(w.z,5.);
+    }
+
+    #[test]
     // test vector subtraction
     fn test_sub() {
         let a: Vector = Vector::new(1.,-4.,11.);
@@ -195,12 +232,31 @@ mod tests {
     }
 
     #[test]
+    // test vector negation
+    fn test_neg() {
+        let v: Vector = Vector::new(-5.,2.,7.);
+        let v_neg: Vector = v.neg();
+        assert_eq!(v_neg.x,5.);
+        assert_eq!(v_neg.y,-2.);
+        assert_eq!(v_neg.z,-7.);
+    }
+
+    #[test]
     // test vector dot product
     fn test_dot() {
         let a: Vector = Vector::new(-1.,3.,5.);
         let b: Vector = Vector::new(6.,2.,11.);
         let dot: f64 = a.dot(&b);
         assert_eq!(dot,55.);
+    }
+
+    #[test]
+    // test dot product with normal
+    fn test_dot_n() {
+        let v: Vector = Vector::new(1.,2.,3.);
+        let n: Normal = Normal::new(-3.,-2.,-1.);
+        let dot: f64 = v.dot_n(&n);
+        assert_eq!(dot,-10.);
     }
 
     #[test]
