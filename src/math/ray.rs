@@ -12,6 +12,13 @@ pub struct Ray {
     pub d: Vector
 }
 
+/// implement display trait
+impl std::fmt::Display for Ray {
+    fn fmt(&self,f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"[origin: {}, direction: {}]",self.o,self.d)
+    }
+}
+
 impl Ray {
     /// Construct ray given origin point and direction vector
     pub fn new(o: &Point,d: &Vector) -> Ray {
@@ -23,7 +30,8 @@ impl Ray {
 
     /// Get point on ray
     pub fn at(&self,t: f64) -> Point {
-        self.o.add_vector(&self.d.scale(t))
+        // self.o.add_vector(&self.d.scale(t))
+        super::point::ZERO
     }
 }
 

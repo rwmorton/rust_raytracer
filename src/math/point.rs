@@ -1,4 +1,5 @@
 use super::vector::Vector;
+use super::traits::{Len,LenSq};
 
 /// # Point
 /// 3 dimensional affine point
@@ -14,6 +15,13 @@ pub struct Point {
     pub z: f64
 }
 
+/// implement display trait
+impl std::fmt::Display for Point {
+    fn fmt(&self,f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"({},{},{})",self.x,self.y,self.z)
+    }
+}
+
 /// helpful constants
 pub const ZERO : Point = Point{x: 0.0,y: 0.0,z: 0.0};
 
@@ -23,47 +31,56 @@ impl Default for Point {
     }
 }
 
-impl Point {
-    /// Construct point from (x,y,z,w) coords
-    pub fn new(x: f64,y: f64,z: f64) -> Point {
-        Point {x,y,z}
-    }
-
-    /// Add vector to point to get a new point
-    pub fn add_vector(&self,v: &Vector) -> Point {
+/// Add vector to point to get a new point
+impl std::ops::Add<Vector> for Point {
+    type Output = Point;
+    fn add(self,v: Vector) -> Point {
         Point {
             x: self.x + v.x,
             y: self.y + v.y,
             z: self.z + v.z
         }
     }
+}
 
-    /// Get vector between this point and rhs point
-    pub fn sub(&self,p: &Point) -> Vector {
+/// Subtract two points to get vector between them
+impl std::ops::Sub for Point {
+    type Output = Vector;
+    fn sub(self,p: Point) -> Vector {
         Vector {
             x: self.x - p.x,
             y: self.y - p.y,
             z: self.z - p.z
         }
     }
+}
 
-    /// Subtract vector from this point to get a new point
-    pub fn sub_vector(&self,v: &Vector) -> Point {
+/// Subtract vector from point to get a new point
+impl std::ops::Sub<Vector> for Point {
+    type Output = Point;
+    fn sub(self,v: Vector) -> Point {
         Point {
             x: self.x - v.x,
             y: self.y - v.y,
             z: self.z - v.z
         }
     }
+}
+
+impl Point {
+    /// Construct point from (x,y,z,w) coords
+    pub fn new(x: f64,y: f64,z: f64) -> Point {
+        Point {x,y,z}
+    }
 
     /// Compute squared distance between two points
-    pub fn distance_sq(&self,p: &Point) -> f64 {
-        self.sub(&p).len_sq()
+    pub fn distance_sq(self,p: Point) -> f64 {
+        (self - p).len_sq()
     }
 
     /// Compute distance between two points
-    pub fn distance(&self,p: &Point) -> f64 {
-        self.sub(&p).len()
+    pub fn distance(self,p: Point) -> f64 {
+        (self - p).len()
     }
 }
 
@@ -98,7 +115,7 @@ mod test {
     fn test_add_vector() {
         let a: Point = Point::new(1.,-1.,3.);
         let v: Vector = Vector::new(1.,1.,1.);
-        let b: Point = a.add_vector(&v);
+        let b: Point = a + v;
         assert_eq!(b.x,2.);
         assert_eq!(b.y,0.);
         assert_eq!(b.z,4.);
@@ -110,7 +127,7 @@ mod test {
     fn test_sub() {
         let a: Point = Point::new(1.,2.,3.);
         let b: Point = Point::new(-2.,1.,4.);
-        let v: Vector = a.sub(&b);
+        let v: Vector = a - b;
         assert_eq!(v.x,3.);
         assert_eq!(v.y,1.);
         assert_eq!(v.z,-1.);
@@ -122,7 +139,7 @@ mod test {
     fn test_sub_vector() {
         let a: Point = Point::new(-4.,3.,1.);
         let v: Vector = Vector::new(1.,-5.,6.);
-        let b: Point = a.sub_vector(&v);
+        let b: Point = a - v;
         assert_eq!(b.x,-5.);
         assert_eq!(b.y,8.);
         assert_eq!(b.z,-5.);
@@ -135,7 +152,7 @@ mod test {
     fn test_distance_sq() {
         let a: Point = Point::new(3.,-7.,1.);
         let b: Point = Point::new(-5.,2.,7.);
-        let len_sq = a.distance_sq(&b);
+        let len_sq = a.distance_sq(b);
         assert_eq!(len_sq,181.);
     }
 
@@ -146,7 +163,7 @@ mod test {
     fn test_distance() {
         let a: Point = Point::new(0.,0.,0.);
         let b: Point = Point::new(1.,1.,0.);
-        let len = a.distance(&b);
+        let len = a.distance(b);
         assert_eq!(len,f64::sqrt(2.));
     }
 }

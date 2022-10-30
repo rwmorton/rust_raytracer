@@ -1,2 +1,9 @@
 pub mod mem;
 pub mod img;
+pub mod data;
+pub mod closure;
+pub mod str;
+pub mod ranges;
+pub mod iter;
+pub mod err;
+pub mod io;

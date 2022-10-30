@@ -1,4 +1,5 @@
 use super::normal::Normal;
+use super::traits::{Len,LenSq,Dot,Cross,Normalize};
 
 /// # Vector
 /// 3 dimensional column vector
@@ -27,139 +28,138 @@ impl Default for Vector {
     }
 }
 
-impl Vector {
-    /// Construct vector from (x,y,z) coords
-    pub fn new(x: f64,y: f64,z: f64) -> Vector {
-        Vector {x,y,z}
+/// implement display trait
+impl std::fmt::Display for Vector {
+    fn fmt(&self,f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"[{},{},{}]",self.x,self.y,self.z)
     }
+}
 
-    /*pub fn new(
-        x: Option<f64>,
-        y: Option<f64>,
-        z: Option<f64>
-    ) -> Vector {
-        let mut _x: f64 = 0.0;
-        let mut _y: f64 = 0.0;
-        let mut _z: f64 = 0.0;
-
-        match (x,y,z) {
-            Some(x,y,z) => Vector{x: _x,y: _y,z: _z},
-            None => Vector{0.,0.,0.}
-        }
-
-        // match (x,y,z) {
-        //     Some(x,y,z) => Vector{x: x,y: y,z: z},
-        //     None => ZERO
-        // }
-    }*/
-
-    /// Print vector
-    pub fn print(&self) {
-        println!("({},{},{})",self.x,self.y,self.z);
-    }
-
-    /// Sum with another vector (immutable)
-    pub fn add(&self,v: &Vector) -> Vector {
+/// Add trait: vector + vector = vector
+impl std::ops::Add for Vector {
+    type Output = Vector;
+    fn add(self,v: Self) -> Vector {
         Vector {
             x: self.x + v.x,
             y: self.y + v.y,
             z: self.z + v.z
         }
     }
+}
 
-    /// Add normal to this vector
-    pub fn add_normal(&self,n: &Normal) -> Vector {
+/// Add trait: vector + normal = vector
+impl std::ops::Add<Normal> for Vector {
+    type Output = Vector;
+    fn add(self,n: Normal) -> Vector {
         Vector {
             x: self.x + n.x,
             y: self.y + n.y,
             z: self.z + n.z
         }
     }
+}
 
-    /// Subtract another vector from self (immutable)
-    pub fn sub(&self,v: &Vector) -> Vector {
+/// Sub trait
+impl std::ops::Sub for Vector {
+    type Output = Self;
+    fn sub(self,v: Vector) -> Vector {
         Vector {
             x: self.x - v.x,
             y: self.y - v.y,
             z: self.z - v.z
         }
     }
+}
 
-    /// Scaled copy
-    pub fn scale(&self,scale: f64) -> Vector {
-        Vector {
-            x: self.x * scale,
-            y: self.y * scale,
-            z: self.z * scale
-        }
-    }
-
-    /// Negate vector
-    pub fn neg(&self) -> Vector {
+/// Neg trait
+impl std::ops::Neg for Vector {
+    type Output = Vector;
+    fn neg(self) -> Vector {
         Vector {
             x: -self.x,
             y: -self.y,
             z: -self.z
         }
     }
+}
 
-    /// Dot product
-    pub fn dot(&self,v: &Vector) -> f64 {
+/// Multiplication trait (scale vector by scalar)
+impl std::ops::Mul<f64> for Vector {
+    type Output = Vector;
+    fn mul(self,factor: f64) -> Vector {
+        Vector {
+            x: self.x * factor,
+            y: self.y * factor,
+            z: self.z * factor
+        }
+    }
+}
+
+/// Dot product of two vectors
+impl Dot<Vector> for Vector {
+    fn dot(&self,v: Vector) -> f64 {
         self.x*v.x + self.y*v.y + self.z*v.z
     }
+}
 
-    /// Dot product with normal
-    pub fn dot_n(&self,n: &Normal) -> f64 {
+/// Dot product of vector and normal
+impl Dot<Normal> for Vector {
+    fn dot(&self,n: Normal) -> f64 {
         self.x*n.x + self.y*n.y + self.z*n.z
     }
+}
 
-    /// Cross product
-    pub fn cross(&self,v: &Vector) -> Vector {
+/// Cross product of two vectors
+impl Cross<Vector> for Vector {
+    type Output = Vector;
+    fn cross(&self,v: Vector) -> Vector {
         Vector {
             x: self.y*v.z - self.z*v.y,
             y: self.z*v.x - self.x*v.z,
             z: self.x*v.y - self.y*v.x
         }
     }
+}
 
-    /// Vector length squared
-    pub fn len_sq(&self) -> f64 {
-        self.x*self.x + self.y*self.y + self.z*self.z
-    }
+/// Normalize vector trait
+impl Normalize for Vector {
+    type Output = Vector;
+    fn normalize(&self) -> Result<Vector,String> {
+        let v_len = self.len();
 
-    /// Vector length
-    pub fn len(&self) -> f64 {
-        f64::sqrt(Vector::len_sq(self))
-    }
-
-    // /// Normalized copy
-    // pub fn normalize(&self) -> Vector {
-    //     let v_len = Vector::len(&self);
-    
-    //     assert!(v_len != 0.0);
-    
-    //     Vector {
-    //         x: self.x / v_len,
-    //         y: self.y / v_len,
-    //         z: self.z / v_len
-    //     }
-    // }
-
-    /// Normalized copy
-    pub fn normalize(&self) -> Result<Vector,String> {
-        let v_len = Vector::len(&self);
-    
         if v_len == 0.0 {
             Err(format!("Division by zero"))
         } else {
+            let recip_len = 1.0 / v_len;
             Ok(
                 Vector {
-                    x: self.x / v_len,
-                    y: self.y / v_len,
-                    z: self.z / v_len
+                    x: self.x * recip_len,
+                    y: self.y * recip_len,
+                    z: self.z * recip_len
                 }
             )
         }
+    }
+}
+
+/// Vector length
+impl Len for Vector {
+    fn len(&self) -> f64 {
+        f64::sqrt(self.len_sq())
+    }
+}
+
+/// Vector length squared
+impl LenSq for Vector {
+    fn len_sq(&self) -> f64 {
+        self.x*self.x + self.y*self.y + self.z*self.z
+    }
+}
+
+impl Vector {
+    /// Construct vector from (x,y,z) coords
+    pub fn new(x: f64,y: f64,z: f64) -> Vector {
+        Vector {x,y,z}
     }
 }
 
@@ -205,83 +205,83 @@ mod tests {
     }
 
     #[test]
-    // test vector addition
-    fn test_add() {
+    // test vector add trait
+    fn test_add_trait() {
         let a: Vector = Vector::new(3.,4.,3.);
         let b: Vector = Vector::new(9.,2.,4.);
-        let c: Vector = a.add(&b);
+        let c: Vector = a + b;
         assert_eq!(c.x,12.);
         assert_eq!(c.y,6.);
         assert_eq!(c.z,7.);
     }
 
     #[test]
-    // test adding normal to vector
-    fn test_add_normal() {
+    // test adding normal to vector (add trait)
+    fn test_add_normal_trait() {
         let v: Vector = Vector::new(1.,-2.,3.);
         let n: Normal = Normal::new(2.,2.,2.);
-        let w: Vector = v.add_normal(&n);
+        let w: Vector = v + n;
         assert_eq!(w.x,3.);
         assert_eq!(w.y,0.);
         assert_eq!(w.z,5.);
     }
 
     #[test]
-    // test vector subtraction
-    fn test_sub() {
+    // test vector sub trait
+    fn test_sub_trait() {
         let a: Vector = Vector::new(1.,-4.,11.);
         let b: Vector = Vector::new(3.,-8.,4.);
-        let c: Vector = a.sub(&b);
+        let c: Vector = a - b;
         assert_eq!(c.x,-2.);
         assert_eq!(c.y,4.);
         assert_eq!(c.z,7.);
     }
 
     #[test]
-    // test vector scale
-    fn test_scale() {
+    // test vector mul trait
+    fn test_scale_trait() {
         let v: Vector = Vector::new(1.,5.,7.);
         let scale = 2f64;
-        let scaled: Vector = v.scale(scale);
+        let scaled: Vector = v * scale;
         assert_eq!(scaled.x,2.);
         assert_eq!(scaled.y,10.);
         assert_eq!(scaled.z,14.);
     }
 
     #[test]
-    // test vector negation
-    fn test_neg() {
+    // test vector neg trait
+    fn test_neg_trait() {
         let v: Vector = Vector::new(-5.,2.,7.);
-        let v_neg: Vector = v.neg();
+        let v_neg: Vector = -v;
         assert_eq!(v_neg.x,5.);
         assert_eq!(v_neg.y,-2.);
         assert_eq!(v_neg.z,-7.);
     }
 
     #[test]
-    // test vector dot product
-    fn test_dot() {
+    // test vector dot vector trait
+    fn test_v_dot_v_trait() {
         let a: Vector = Vector::new(-1.,3.,5.);
         let b: Vector = Vector::new(6.,2.,11.);
-        let dot: f64 = a.dot(&b);
+        let dot: f64 = a.dot(b);
         assert_eq!(dot,55.);
     }
 
     #[test]
     // test dot product with normal
-    fn test_dot_n() {
+    fn test_dot_n_trait() {
         let v: Vector = Vector::new(1.,2.,3.);
         let n: Normal = Normal::new(-3.,-2.,-1.);
-        let dot: f64 = v.dot_n(&n);
+        let dot: f64 = v.dot(n);
         assert_eq!(dot,-10.);
     }
 
     #[test]
-    // test vector cross product
+    // test vector cross product trait
     fn test_cross() {
         let a: Vector = Vector::new(3.,-3.,1.);
         let b: Vector = Vector::new(4.,9.,2.);
-        let c: Vector = a.cross(&b);
+        let c: Vector = a.cross(b);
         assert_eq!(c.x,-15.);
         assert_eq!(c.y,-2.);
         assert_eq!(c.z,39.);
@@ -304,8 +304,8 @@ mod tests {
     }
 
     #[test]
-    // test vector normalization
-    fn test_normalize() {
+    // test vector normalization trait
+    fn test_normalize_trait() {
         let v: Vector = Vector::new(8.,-1.,4.);
         let v_norm: Vector = v.normalize().unwrap();
         let len: f64 = v.len();
