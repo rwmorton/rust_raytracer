@@ -132,16 +132,33 @@ impl Vector {
         f64::sqrt(Vector::len_sq(self))
     }
 
+    // /// Normalized copy
+    // pub fn normalize(&self) -> Vector {
+    //     let v_len = Vector::len(&self);
+    
+    //     assert!(v_len != 0.0);
+    
+    //     Vector {
+    //         x: self.x / v_len,
+    //         y: self.y / v_len,
+    //         z: self.z / v_len
+    //     }
+    // }
+
     /// Normalized copy
-    pub fn normalize(&self) -> Vector {
+    pub fn normalize(&self) -> Result<Vector,String> {
         let v_len = Vector::len(&self);
     
-        assert!(v_len != 0.0);
-    
-        Vector {
-            x: self.x / v_len,
-            y: self.y / v_len,
-            z: self.z / v_len
+        if v_len == 0.0 {
+            Err(format!("Division by zero"))
+        } else {
+            Ok(
+                Vector {
+                    x: self.x / v_len,
+                    y: self.y / v_len,
+                    z: self.z / v_len
+                }
+            )
         }
     }
 }
@@ -290,7 +307,7 @@ mod tests {
     // test vector normalization
     fn test_normalize() {
         let v: Vector = Vector::new(8.,-1.,4.);
-        let v_norm: Vector = v.normalize();
+        let v_norm: Vector = v.normalize().unwrap();
         let len: f64 = v.len();
         assert_eq!(v_norm.x,v.x / len);
         assert_eq!(v_norm.y,v.y / len);
