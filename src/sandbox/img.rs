@@ -1,3 +1,7 @@
+// https://docs.rs/image/latest/image/
+// https://github.com/image-rs/image/blob/master/README.md
+// https://blog.logrocket.com/decoding-encoding-images-rust-using-image-crate/
+
 use image::{
     GenericImage,
     GenericImageView,
