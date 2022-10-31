@@ -3,9 +3,15 @@ mod scene;
 mod view;
 mod image;
 
+use view::window::Window;
+use crate::image::film::Film;
+
 fn main() {
-    // sandbox::poly::test1();
-    // sandbox::poly::test2();
+    const width: usize = 800;
+    const height: usize = 600;
+    let film: Film = Film::new(width,height);
+    let window: Window = Window::new(width as u32,height as u32,film);
+    window.run().unwrap();
 }
 
 // mod math;

@@ -1,10 +1,18 @@
 use super::color::Color;
 
+#[allow(dead_code)]
 pub struct Film {
-    width: usize,
-    height: usize,
-    frame_buffer: Vec<u8>
+    pub width: usize,
+    pub height: usize,
+    pub frame_buffer: Vec<u8>
 }
+
+// impl<Vec<u8>> std::ops::DerefMut for Film {
+//     type Target = Vec<u8>;
+//     fn deref_mut(&mut self) -> &mut Self::Target {
+//         &mut self.frame_buffer
+//     }
+// }
 
 impl Film {
     /// Construct film
@@ -19,8 +27,6 @@ impl Film {
 
     /// Clear the film to given RGBA color
     pub fn clear(&mut self,color: Color) {
-        let size: usize = self.width*self.height;
-
         let r: u8 = (color.r * 255.) as u8;
         let g: u8 = (color.g * 255.) as u8;
         let b: u8 = (color.b * 255.) as u8;
