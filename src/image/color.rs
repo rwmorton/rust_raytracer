@@ -6,6 +6,7 @@
 /// * g
 /// * b
 /// * a
+#[derive(Clone,Copy)]
 pub struct Color {
     pub r: f64,
     pub g: f64,
@@ -22,19 +23,16 @@ pub const BLUE : Color = Color{r: 0.0,g: 0.0,b: 1.0,a: 1.0};
 
 impl Color {
     /// Construct (r,g,b,a) color
-    pub fn new(r: f64,g: f64,b: f64,a: f64) -> Color {
+    pub fn new(r: f64,g: f64,b: f64,a: f64) -> Result<Color,String> {
 
-        // assert correct ranges
-        assert_eq!(r >= 0.0,true);
-        assert_eq!(r <= 1.0,true);
-        assert_eq!(g >= 0.0,true);
-        assert_eq!(g <= 1.0,true);
-        assert_eq!(b >= 0.0,true);
-        assert_eq!(b <= 1.0,true);
-        assert_eq!(a >= 0.0,true);
-        assert_eq!(a <= 1.0,true);
-        
-        Color {r,g,b,a}
+        if (r>=0.0 && r<=1.0) &&
+            (g>=0.0 && g<=1.0) &&
+            (b>=0.0 && b<=1.0) &&
+            (a>=0.0 && a<=1.0) {
+            Ok(Color{r,g,b,a})
+        } else {
+            Err(format!("({},{},{},{}) out of range",r,g,b,a))
+        }
     }
 }
 
@@ -93,7 +91,7 @@ mod tests {
     #[test]
     // test color construction correct
     fn test_new() {
-        let c: Color = Color::new(0.1,0.2,0.3,0.4);
+        let c: Color = Color::new(0.1,0.2,0.3,0.4).unwrap();
         assert_eq!(c.r,0.1);
         assert_eq!(c.g,0.2);
         assert_eq!(c.b,0.3);

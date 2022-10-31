@@ -86,6 +86,7 @@ impl Window {
         // TEMP
         self.canvas.set_draw_color(Color::RGB(self.i, 64, 255 - self.i));
         self.canvas.clear();
+
         self.canvas.present();
     }
 }
