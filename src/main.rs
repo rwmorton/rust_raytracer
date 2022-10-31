@@ -1,5 +1,7 @@
 mod math;
 mod scene;
+mod view;
+mod image;
 
 fn main() {
     // sandbox::poly::test1();

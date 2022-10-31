@@ -42,8 +42,6 @@ impl Ray {
 
 #[cfg(test)]
 mod tests {
-    use crate::math::point::ZERO;
-
     use super::*;
 
     #[test]
