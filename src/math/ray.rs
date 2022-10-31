@@ -7,6 +7,7 @@ use super::vector::Vector;
 /// # Parameters
 /// * o (origin)
 /// * d (direction)
+#[derive(Clone,Copy)]
 pub struct Ray {
     pub o: Point,
     pub d: Vector

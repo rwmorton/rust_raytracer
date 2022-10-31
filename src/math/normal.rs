@@ -9,6 +9,7 @@ use super::traits::{Len,LenSq,Dot,Normalize};
 /// * x
 /// * y
 /// * z
+#[derive(Clone,Copy)]
 pub struct Normal {
     pub x: f64,
     pub y: f64,

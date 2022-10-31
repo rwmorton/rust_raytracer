@@ -7,3 +7,4 @@ pub mod ranges;
 pub mod iter;
 pub mod err;
 pub mod io;
+pub mod poly;

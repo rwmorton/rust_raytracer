@@ -9,6 +9,7 @@ use super::traits::{Len,LenSq};
 /// * x
 /// * y
 /// * z
+#[derive(Clone,Copy)]
 pub struct Point {
     pub x: f64,
     pub y: f64,

@@ -9,6 +9,7 @@ use super::traits::{Len,LenSq,Dot,Cross,Normalize};
 /// * x
 /// * y
 /// * z
+#[derive(Clone,Copy)]
 pub struct Vector {
     pub x: f64,
     pub y: f64,
