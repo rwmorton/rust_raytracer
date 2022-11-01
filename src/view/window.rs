@@ -14,9 +14,11 @@ use crate::image::color::Color;
 
 use crate::scene::world::*;
 use crate::scene::sphere::*;
+use crate::scene::plane::*;
 use crate::math::point::*;
 use crate::math::ray::*;
 use crate::math::vector::*;
+use crate::math::normal::*;
 
 use rand::Rng;
 
@@ -72,14 +74,21 @@ impl<'a> Window<'a> {
 
         // set up the world
         let mut world = World::new(1);
-        let mut s_center = Point::new(0.,0.,0.);
+        let mut s_center = Point::new(0.,0.,1.);
         let mut s_radius = 0.5;
         let mut sphere = Sphere::new(s_radius,s_center);
         world.add_primitive(Box::new(sphere));
+
+        let plane = Plane::new(
+            &Point::new(0.,-1.,5.),&
+            Normal::new(0.,1.,0.25)
+        );
+        world.add_primitive(Box::new(plane));
+
         // ray initialized at origin, pointing in positive Z
         let mut ray: Ray = Ray::new(&Point::new(0.,0.,0.),&Vector::new(0.,0.,1.));
         let mut hit_color = Color::new(1.,0.,0.,1.).unwrap();
-        let mut SPEED = 0.05;
+        let mut SPEED = 0.01;
 
         // set up texture
         let texture_creator = self.canvas.texture_creator();
@@ -91,6 +100,9 @@ impl<'a> Window<'a> {
                 self.height as u32
             )
             .expect("Couldn't create SDL2 texture");
+        
+        let mut prev = std::time::Instant::now();
+        let mut cur;
 
         let mut event_pump = self.context.event_pump()?;
         'running: loop {
@@ -148,13 +160,19 @@ impl<'a> Window<'a> {
             } else if s_center.x <= -(1. - s_radius) {
                 SPEED *= -1.;
             }
-            // s_center.x += SPEED;
+            s_center.x += SPEED;
             world.primitives[0] = Box::new(Sphere::new(s_radius,s_center));
 
             // self.update();
             self.render();
 
-            ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+            cur = std::time::Instant::now();
+            let elapsed = cur - prev;
+            prev = cur;
+            let ms = elapsed.as_millis();
+            println!("cast {} rays at {} ms per frame ~ {} fps",self.width*self.height,ms,f64::round(1000. / (ms as f64)));
+
+            // ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
 
         Ok(())
