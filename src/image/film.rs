@@ -50,15 +50,26 @@ impl Film {
             return Err(format!("({},{}) is an invalid range",x,y))
         }
 
-        let index: usize = (x*4*self.width) + (y*4);
+        let index: usize = (y*4*self.width) + (x*4);
 
         //
-        self.frame_buffer[ index ] = (color.r*255.) as u8;
-        self.frame_buffer[index+1] = (color.b*255.) as u8;
-        self.frame_buffer[index+2] = (color.b*255.) as u8;
+        self.frame_buffer[ index ] = (color.b*255.) as u8;
+        self.frame_buffer[index+1] = (color.g*255.) as u8;
+        self.frame_buffer[index+2] = (color.r*255.) as u8;
         self.frame_buffer[index+3] = (color.a*255.) as u8;
 
         Ok(())
+    }
+
+    /// Transform to NDC
+    pub fn ndc(&self,x: u32,y: u32) -> (f64,f64) {
+        // TEMP: only works for w >= h
+        let aspect = self.width as f64 / self.height as f64;
+
+        let mut fx = 2.0 / (self.width as f64);
+        let mut fy = 2.0 / (self.height as f64);
+
+        (aspect * ((x as f64) * fx) - (1.0 * aspect),-(((y as f64) * fy) - 1.0))
     }
 }
 
@@ -154,5 +165,56 @@ mod tests {
         assert_eq!(film.frame_buffer[170],0);
         assert_eq!(film.frame_buffer[171],255);
         //
+    }
+
+    #[test]
+    // should correctly transform to NDC
+    fn test_ndc() {
+        let film = Film::new(800,600);
+
+        // (0,0) -> (-1,1)
+        let mut ndc = film.ndc(0,0);
+        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.1,1.);
+
+        // (400,0) -> (0,1)
+        ndc = film.ndc(400,0);
+        assert_eq!(ndc.0,0.);
+        assert_eq!(ndc.1,1.);
+
+        // (800,0) -> (1,1)
+        ndc = film.ndc(800,0);
+        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.1,1.);
+
+        // (800,300) -> (1,0)
+        ndc = film.ndc(800,300);
+        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.1,0.);
+
+        // (800,600) -> (1,-1)
+        ndc = film.ndc(800,600);
+        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.1,-1.);
+
+        // (400,600) -> (0,-1)
+        ndc = film.ndc(400,600);
+        assert_eq!(ndc.0,0.);
+        assert_eq!(ndc.1,-1.);
+
+        // (0,600) -> (-1,-1)
+        ndc = film.ndc(0,600);
+        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.1,-1.);
+
+        // (0,300) -> (-1,0)
+        ndc = film.ndc(0,300);
+        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.1,0.);
+
+        // (400,300) -> (0,0)
+        ndc = film.ndc(400,300);
+        assert_eq!(ndc.0,0.);
+        assert_eq!(ndc.1,0.);
     }
 }

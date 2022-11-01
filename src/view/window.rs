@@ -12,9 +12,13 @@ use std::time::Duration;
 use crate::image::film::Film;
 use crate::image::color::Color;
 
-use rand::Rng;
+use crate::scene::world::*;
+use crate::scene::sphere::*;
+use crate::math::point::*;
+use crate::math::ray::*;
+use crate::math::vector::*;
 
-static WINDOW_TITLE: &str = "Rust Raytracing Demo";
+use rand::Rng;
 
 #[allow(dead_code)]
 pub struct Window<'a> {
@@ -30,12 +34,12 @@ pub struct Window<'a> {
 
 impl<'a> Window<'a> {
     /// Construct window
-    pub fn new(width: u32,height: u32,film: &'a mut Film) -> Window<'a> {
+    pub fn new(title: String,width: u32,height: u32,film: &'a mut Film) -> Window<'a> {
         //
         let context = sdl2::init().unwrap();
         let video = context.video().unwrap();
         let window: video::Window = video
-            .window(WINDOW_TITLE,width,height)
+            .window(title.as_str(),width,height)
             .position_centered()
             .build()
             .expect("Failed to initialize SDL2 video subsystem");
@@ -65,6 +69,17 @@ impl<'a> Window<'a> {
 
     /// Main loop
     pub fn run(mut self) -> Result<(),String> {
+
+        // set up the world
+        let mut world = World::new(1);
+        let mut s_center = Point::new(0.,0.,0.);
+        let mut s_radius = 0.5;
+        let mut sphere = Sphere::new(s_radius,s_center);
+        world.add_primitive(Box::new(sphere));
+        // ray initialized at origin, pointing in positive Z
+        let mut ray: Ray = Ray::new(&Point::new(0.,0.,0.),&Vector::new(0.,0.,1.));
+        let mut hit_color = Color::new(1.,0.,0.,1.).unwrap();
+        let mut SPEED = 0.05;
 
         // set up texture
         let texture_creator = self.canvas.texture_creator();
@@ -99,12 +114,44 @@ impl<'a> Window<'a> {
             )
             .expect("Coudln't copy framebuffer to texture");
 
-            let color: Color = Color::new(0.5,0.5,0.5,1.).unwrap();
-            self.film.clear(color) ; //.unwrap();
+            let color: Color = Color::new(0.,0.,0.,1.).unwrap();
+            self.film.clear(crate::image::color::BLACK);
+
+            // raytrace!
+            for i in 0..self.width {
+                for j in 0..self.height {
+                    let (x,y) = self.film.ndc(i,j);
+                    // we only need to adjust ray origin's x and y coord
+                    ray.o.x = x;
+                    ray.o.y = y;
+                    let result = world.hit(&ray);
+                    match result {
+                        Some(x) => {
+                            // got a hit!
+                            let mut v = x - s_center;
+                            hit_color.r = (v.x * 0.5) + 0.5;
+                            hit_color.g = (v.y * 0.5) + 0.5;
+                            hit_color.b = (v.z * 0.5) + 0.5;
+                            self.film.write_pixel(i as usize,j as usize,hit_color);
+                        },
+                        None => {
+                            // do nothing
+                        }
+                    }
+                }
+            }
 
             self.canvas.copy(&texture,None,None);
 
-            self.update();
+            if s_center.x >= (1. - s_radius) {
+                SPEED *= -1.;
+            } else if s_center.x <= -(1. - s_radius) {
+                SPEED *= -1.;
+            }
+            // s_center.x += SPEED;
+            world.primitives[0] = Box::new(Sphere::new(s_radius,s_center));
+
+            // self.update();
             self.render();
 
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));

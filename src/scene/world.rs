@@ -4,13 +4,13 @@ use crate::math::point::Point;
 use crate::math::vector::Vector;
 use crate::math::ray::Ray;
 
-struct World {
-    primitives: Vec<Box<dyn Primitive>>
+pub struct World {
+    pub primitives: Vec<Box<dyn Primitive>>
 }
 
 impl World {
     /// Construct world
-    fn new(num_primitives: usize) -> World {
+    pub fn new(num_primitives: usize) -> World {
         World {
             // primitives: vec![]
             primitives: Vec::with_capacity(num_primitives)
@@ -18,13 +18,13 @@ impl World {
     }
 
     /// Add primitive
-    fn add_primitive(&mut self,primitive: Box<dyn Primitive>) {
+    pub fn add_primitive(&mut self,primitive: Box<dyn Primitive>) {
         self.primitives.push(primitive);
     }
 
     /// test hit - not final just for testing purposes
     /// returns the very first hit point, none otherwise
-    fn hit(&self,ray: &Ray) -> Option<Point> {
+    pub fn hit(&self,ray: &Ray) -> Option<Point> {
         let mut thit: f64 = f64::INFINITY;
 
         let mut result: Option<Point>;
