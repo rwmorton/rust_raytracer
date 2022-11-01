@@ -6,7 +6,7 @@ use crate::math::traits::Dot;
 
 use super::traits::Primitive;
 
-struct Plane {
+pub struct Plane {
     pub point: Point,
     pub normal: Normal
 }

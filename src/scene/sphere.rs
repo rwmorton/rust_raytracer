@@ -5,7 +5,7 @@ use crate::math::traits::Dot;
 
 use super::traits::Primitive;
 
-struct Sphere {
+pub struct Sphere {
     pub radius: f64,
     pub center: Point
 }
