@@ -13,6 +13,8 @@ use std::time::Duration;
 use crate::image::film::Film;
 use crate::image::color::Color;
 
+use rand::Rng;
+
 static WINDOW_TITLE: &str = "Rust Raytracing Demo";
 
 #[allow(dead_code)]
@@ -101,7 +103,7 @@ impl<'a> Window<'a> {
 
             self.canvas.present();
 
-            // self.update();
+            self.update();
             // self.render();
 
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
@@ -115,6 +117,12 @@ impl<'a> Window<'a> {
         //
         // TEMP
         self.i = (self.i + 1) % 255;
+        //
+        let r = rand::thread_rng().gen();
+        let g = rand::thread_rng().gen();
+        let b = rand::thread_rng().gen();
+        let col = Color::new(r,g,b,1.).unwrap();
+        self.film.clear(col);
     }
 
     /// Render
