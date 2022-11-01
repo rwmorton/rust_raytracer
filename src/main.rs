@@ -9,8 +9,8 @@ use crate::image::film::Film;
 fn main() {
     const width: usize = 800;
     const height: usize = 600;
-    let film: Film = Film::new(width,height);
-    let window: Window = Window::new(width as u32,height as u32,film);
+    let mut film: Film = Film::new(width,height);
+    let window: Window = Window::new(width as u32,height as u32,&mut film);
     window.run().unwrap();
 }
 

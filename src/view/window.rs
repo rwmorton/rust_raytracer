@@ -16,22 +16,23 @@ use crate::image::color::Color;
 static WINDOW_TITLE: &str = "Rust Raytracing Demo";
 
 #[allow(dead_code)]
-pub struct Window {
+pub struct Window<'a> {
     width: u32,
     height: u32,
     context: Sdl,
     video: VideoSubsystem,
     canvas: Canvas<video::Window>,
     //
-    film: std::rc::Rc<Film>,
+    // film: std::rc::Rc<Film>,
+    film: &'a mut Film,
     //
     // TEMP
     i: u8
 }
 
-impl Window {
+impl<'a> Window<'a> {
     /// Construct window
-    pub fn new(width: u32,height: u32,film: Film) -> Window {
+    pub fn new(width: u32,height: u32,film: &'a mut Film) -> Window<'a> {
         //
         let context = sdl2::init().unwrap();
         let video = context.video().unwrap();
@@ -49,7 +50,8 @@ impl Window {
             width,height,
             context,video,canvas,
             //
-            film: std::rc::Rc::new(film),
+            // film: std::rc::Rc::new(film),
+            film,
             //
             // TEMP
             i: 0
@@ -93,13 +95,13 @@ impl Window {
             .expect("Coudln't copy framebuffer to texture");
 
             let color: Color = Color::new(0.5,0.5,0.5,1.).unwrap();
-            // self.film.clear(color) ; //.unwrap();
+            self.film.clear(color) ; //.unwrap();
 
             self.canvas.copy(&texture,None,None);
 
             self.canvas.present();
 
-            self.update();
+            // self.update();
             // self.render();
 
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
