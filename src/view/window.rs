@@ -3,8 +3,7 @@
 
 use sdl2::{Sdl,VideoSubsystem};
 use sdl2::video;
-use sdl2::render::{Canvas,Texture};
-// use sdl2::pixels::Color;
+use sdl2::render::{Canvas,TextureCreator,Texture};
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 
@@ -24,12 +23,9 @@ pub struct Window<'a> {
     context: Sdl,
     video: VideoSubsystem,
     canvas: Canvas<video::Window>,
-    //
-    // film: std::rc::Rc<Film>,
     film: &'a mut Film,
-    //
-    // TEMP
-    i: u8
+    // texture_creator: TextureCreator<video::WindowContext>,
+    // texture: Texture<'a>
 }
 
 impl<'a> Window<'a> {
@@ -48,15 +44,22 @@ impl<'a> Window<'a> {
             .build()
             .expect("Failed to make SDL2 canvas");
 
+        // // set up texture
+        // let texture_creator = canvas.texture_creator();
+        // let texture = texture_creator
+        //     .create_texture(
+        //         sdl2::pixels::PixelFormatEnum::ARGB8888,
+        //         sdl2::render::TextureAccess::Streaming,
+        //         width as u32,
+        //         height as u32
+        //     )
+        //     .expect("Couldn't create SDL2 texture");
+
         Window {
             width,height,
             context,video,canvas,
-            //
-            // film: std::rc::Rc::new(film),
             film,
-            //
-            // TEMP
-            i: 0
+            // texture_creator,texture
         }
     }
 
@@ -101,10 +104,8 @@ impl<'a> Window<'a> {
 
             self.canvas.copy(&texture,None,None);
 
-            self.canvas.present();
-
             self.update();
-            // self.render();
+            self.render();
 
             ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
         }
@@ -114,10 +115,6 @@ impl<'a> Window<'a> {
 
     /// Update
     fn update(&mut self) {
-        //
-        // TEMP
-        self.i = (self.i + 1) % 255;
-        //
         let r = rand::thread_rng().gen();
         let g = rand::thread_rng().gen();
         let b = rand::thread_rng().gen();
@@ -127,11 +124,6 @@ impl<'a> Window<'a> {
 
     /// Render
     fn render(&mut self) {
-        //
-        // TEMP
-        // self.canvas.set_draw_color(Color::RGB(self.i, 64, 255 - self.i));
-        self.canvas.clear();
-
         self.canvas.present();
     }
 }
