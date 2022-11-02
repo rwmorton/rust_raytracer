@@ -3,8 +3,10 @@ mod scene;
 mod view;
 mod image;
 
-use view::window::Window;
-use image::film::Film;
+use crate::{
+    view::window::Window,
+    image::film::Film
+};
 
 fn main() {
     const WIDTH: usize = 800;
