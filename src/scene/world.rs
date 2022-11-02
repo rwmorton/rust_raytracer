@@ -1,8 +1,9 @@
 use super::traits::Primitive;
-
-use crate::math::point::Point;
-use crate::math::vector::Vector;
-use crate::math::ray::Ray;
+use crate::math::{
+    point::Point,
+    vector::Vector,
+    ray::Ray
+};
 
 pub struct World {
     pub primitives: Vec<Box<dyn Primitive>>

@@ -1,7 +1,9 @@
-use super::vector::Vector;
-use super::point::Point;
-use super::normal::Normal;
-use super::ray::Ray;
+use super::{
+    point::Point,
+    vector::Vector,
+    normal::Normal,
+    ray::Ray
+};
 
 use super::traits::{Dot};
 

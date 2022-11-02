@@ -1,5 +1,7 @@
-use super::vector::Vector;
-use super::traits::{Len,LenSq,Dot,Normalize};
+use super::{
+    vector::Vector,
+    traits::{Len,LenSq,Dot,Normalize}
+};
 
 /// # Normal
 /// 3 dimensional normal

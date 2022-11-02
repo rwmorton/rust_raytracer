@@ -1,5 +1,7 @@
-use super::point::Point;
-use super::vector::Vector;
+use super::{
+    point::Point,
+    vector::Vector
+};
 
 /// # Ray
 /// Ray has an origin (Point) and a direction (Vector)

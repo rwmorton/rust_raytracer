@@ -1,5 +1,7 @@
-use super::vector::Vector;
-use super::traits::{Len,LenSq};
+use super::{
+    vector::Vector,
+    traits::{Len,LenSq}
+};
 
 /// # Point
 /// 3 dimensional affine point

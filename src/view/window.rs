@@ -9,16 +9,11 @@ use sdl2::keyboard::Keycode;
 
 use std::time::Duration;
 
-use crate::image::film::Film;
-use crate::image::color::Color;
-
-use crate::scene::world::*;
-use crate::scene::sphere::*;
-use crate::scene::plane::*;
-use crate::math::point::*;
-use crate::math::ray::*;
-use crate::math::vector::*;
-use crate::math::normal::*;
+use crate::{
+    image::{film::Film,color::Color},
+    scene::{world::*,sphere::*,plane::*},
+    math::{point::*,ray::*,vector::*,normal::*}
+};
 
 use rand::Rng;
 

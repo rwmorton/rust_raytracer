@@ -1,5 +1,7 @@
-use super::normal::Normal;
-use super::traits::{Len,LenSq,Dot,Cross,Normalize};
+use super::{
+    normal::Normal,
+    traits::{Len,LenSq,Dot,Cross,Normalize}
+};
 
 /// # Vector
 /// 3 dimensional column vector
