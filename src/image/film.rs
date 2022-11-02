@@ -50,6 +50,7 @@ impl Film {
             return Err(format!("({},{}) is an invalid range",x,y))
         }
 
+        // let index: usize = (x*4*self.width) + (y*4);
         let index: usize = (y*4*self.width) + (x*4);
 
         //
@@ -128,53 +129,60 @@ mod tests {
 
         let mut film: Film = Film::new(8,6);
         let mut color: Color = Color::new(1.,0.,0.,1.).unwrap();
+        let black = Color::new(0.,0.,0.,0.).unwrap();
 
+        film.clear(black);
         film.write_pixel(0,0,color).unwrap();
-        assert_eq!(film.frame_buffer[0],255);
+        assert_eq!(film.frame_buffer[0],0);
         assert_eq!(film.frame_buffer[1],0);
-        assert_eq!(film.frame_buffer[2],0);
+        assert_eq!(film.frame_buffer[2],255);
         assert_eq!(film.frame_buffer[3],255);
 
+        film.clear(black);
         film.write_pixel(0,1,color).unwrap();
-        assert_eq!(film.frame_buffer[4],255);
+        assert_eq!(film.frame_buffer[4],0);
         assert_eq!(film.frame_buffer[5],0);
-        assert_eq!(film.frame_buffer[6],0);
+        assert_eq!(film.frame_buffer[6],255);
         assert_eq!(film.frame_buffer[7],255);
 
+        film.clear(black);
         film.write_pixel(0,2,color).unwrap();
-        assert_eq!(film.frame_buffer[8],255);
+        assert_eq!(film.frame_buffer[8],0);
         assert_eq!(film.frame_buffer[9],0);
-        assert_eq!(film.frame_buffer[10],0);
+        assert_eq!(film.frame_buffer[10],255);
         assert_eq!(film.frame_buffer[11],255);
 
+        film.clear(black);
         film.write_pixel(3,5,color).unwrap();
-        assert_eq!(film.frame_buffer[116],255);
+        assert_eq!(film.frame_buffer[116],0);
         assert_eq!(film.frame_buffer[117],0);
-        assert_eq!(film.frame_buffer[118],0);
+        assert_eq!(film.frame_buffer[118],255);
         assert_eq!(film.frame_buffer[119],255);
 
-        film.write_pixel(5,7,color).unwrap();
-        assert_eq!(film.frame_buffer[188],255);
-        assert_eq!(film.frame_buffer[189],0);
-        assert_eq!(film.frame_buffer[190],0);
-        assert_eq!(film.frame_buffer[191],255);
-
+        film.clear(black);
         film.write_pixel(5,2,color).unwrap();
-        assert_eq!(film.frame_buffer[168],255);
+        assert_eq!(film.frame_buffer[168],0);
         assert_eq!(film.frame_buffer[169],0);
-        assert_eq!(film.frame_buffer[170],0);
+        assert_eq!(film.frame_buffer[170],255);
         assert_eq!(film.frame_buffer[171],255);
-        //
+
+        film.clear(black);
+        film.write_pixel(5,7,color).unwrap();
+        assert_eq!(film.frame_buffer[188],0);
+        assert_eq!(film.frame_buffer[189],0);
+        assert_eq!(film.frame_buffer[190],255);
+        assert_eq!(film.frame_buffer[191],255);
     }
 
     #[test]
     // should correctly transform to NDC
     fn test_ndc() {
         let film = Film::new(800,600);
+        let aspect = 800. / 600.;
 
         // (0,0) -> (-1,1)
         let mut ndc = film.ndc(0,0);
-        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.0,-1. * aspect);
         assert_eq!(ndc.1,1.);
 
         // (400,0) -> (0,1)
@@ -184,17 +192,17 @@ mod tests {
 
         // (800,0) -> (1,1)
         ndc = film.ndc(800,0);
-        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.0,1. * aspect);
         assert_eq!(ndc.1,1.);
 
         // (800,300) -> (1,0)
         ndc = film.ndc(800,300);
-        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.0,1. * aspect);
         assert_eq!(ndc.1,0.);
 
         // (800,600) -> (1,-1)
         ndc = film.ndc(800,600);
-        assert_eq!(ndc.0,1.);
+        assert_eq!(ndc.0,1. * aspect);
         assert_eq!(ndc.1,-1.);
 
         // (400,600) -> (0,-1)
@@ -204,12 +212,12 @@ mod tests {
 
         // (0,600) -> (-1,-1)
         ndc = film.ndc(0,600);
-        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.0,-1. * aspect);
         assert_eq!(ndc.1,-1.);
 
         // (0,300) -> (-1,0)
         ndc = film.ndc(0,300);
-        assert_eq!(ndc.0,-1.);
+        assert_eq!(ndc.0,-1. * aspect);
         assert_eq!(ndc.1,0.);
 
         // (400,300) -> (0,0)

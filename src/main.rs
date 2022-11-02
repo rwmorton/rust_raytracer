@@ -4,7 +4,7 @@ mod view;
 mod image;
 
 use view::window::Window;
-use crate::image::film::Film;
+use image::film::Film;
 
 fn main() {
     const WIDTH: usize = 800;

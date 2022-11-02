@@ -153,6 +153,20 @@ impl<'a> Window<'a> {
                 }
             }
 
+            // let mut switch: bool = false;
+
+            // for i in 0..self.width {
+            //     for j in 0..self.height {
+            //         if switch {
+            //             self.film.write_pixel(i as usize,j as usize,hit_color);
+            //         } else {
+            //             let col = Color::new(1.,1.,0.,1.).unwrap();
+            //             self.film.write_pixel(i as usize,j as usize,col);
+            //         }
+            //     }
+            //     switch = !switch;
+            // }
+
             self.canvas.copy(&texture,None,None);
 
             if s_center.x >= (1. - s_radius) {
